@@ -12,7 +12,7 @@ $!callback.setSavePath($tool.append($tableInfo.savePath, "/service"))
 #if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}service;
 
 import $!{tableInfo.savePackageName}.entity.$!{tableInfo.name}PO;
-import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
 
 
 /**
@@ -43,7 +43,7 @@ public interface $!{tableName} {
      * @author $!author
      * @since $!time.currTime()
      */
-     Page<$!{tableInfo.name}PO> queryAllByLimit($!{tableInfo.name}PO $!tool.firstLowerCase($!{tableInfo.name}), int offset, int limit);
+     PageInfo<$!{tableInfo.name}PO> queryAllByLimit($!{tableInfo.name}PO $!tool.firstLowerCase($!{tableInfo.name}), int offset, int limit);
 
     /**
      * 新增数据
