@@ -1,43 +1,47 @@
-##引入宏定义
-$!define
-
-##使用宏定义设置回调（保存位置与文件后缀）
-#save("/entity", "PO.java")
-
-##使用宏定义设置包后缀
-#setPackageSuffix("entity")
-
-##使用全局变量实现默认包导入
-$!autoImport
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-
-##使用宏定义实现类注释信息
-#tableComment("实体")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-@ApiModel("$!{tableInfo.comment}")
-public class $!{tableInfo.name}PO {
-
-#foreach($column in $tableInfo.fullColumn)
-
-    #if(${column.comment})/**
-    * ${column.comment}
-    */#end
-
-    #if($column.obj.name == "id")@ApiModelProperty(value = "$!{column.comment}")#end
-    #if($column.obj.name != "id")@ApiModelProperty(value = "$!{column.comment}", required = true)#end
-    private $!{tool.getClsNameByFullName($column.type)} $!{column.name};
+##定义初始变量
+#set($tableName = $tool.append($tableInfo.name, "Controller"))
+##设置回调
+$!callback.setFileName($tool.append($tableName, ".java"))
+$!callback.setSavePath($tool.append($tableInfo.savePath, "/controller"))
+##拿到主键
+#if(!$tableInfo.pkColumn.isEmpty())
+    #set($pk = $tableInfo.pkColumn.get(0))
 #end
+
+#if($tableInfo.savePackageName)package $!{tableInfo.savePackageName}.#{end}controller;
+
+import $!{tableInfo.savePackageName}.entity.$!{tableInfo.name}PO;
+import $!{tableInfo.savePackageName}.service.$!{tableInfo.name}Service;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+
+/**
+ * @author: $!author
+ * @date: $!time.currTime()
+ * @description: $!{tableInfo.comment}($!{tableInfo.name})表控制层
+ */
+@Api(tags = "#if($!{tableInfo.comment})$!{tableInfo.comment}API#end")
+@RestController
+@RequestMapping("/$!tool.firstLowerCase($tableInfo.name)")
+public class $!{tableName} {
+    
+    @Resource
+    private $!{tableInfo.name}Service $!tool.firstLowerCase($tableInfo.name)Service;
+
+    /**
+     * 通过主键查询单条数据
+     *
+     * @param id 主键
+     * @return 单条数据
+     */
+    @ApiOperation(value = "通过主键查询单条数据")
+    @GetMapping("/selectOne")
+    public $!{tableInfo.name}PO selectOne($!pk.shortType id) {
+        return this.$!{tool.firstLowerCase($tableInfo.name)}Service.queryById(id);
+    }
+
 }
 
