@@ -14,7 +14,7 @@ $!callback.setSavePath($tool.append($tableInfo.savePath, "/service/impl"))
 import $!{tableInfo.savePackageName}.entity.$!{tableInfo.name}PO;
 import $!{tableInfo.savePackageName}.dao.$!{tableInfo.name}Dao;
 import $!{tableInfo.savePackageName}.service.$!{tableInfo.name}Service;
-import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 
@@ -55,8 +55,8 @@ public class $!{tableName} implements $!{tableInfo.name}Service {
      * @since $!time.currTime()
      */
     @Override
-    public PageInfo<$!{tableInfo.name}PO> queryAllByLimit($!{tableInfo.name}PO $!tool.firstLowerCase($!{tableInfo.name}), int offset, int limit) {
-        return PageHelper.startPage(offset, limit).doSelectPageInfo(()->$!{tool.firstLowerCase($!{tableInfo.name})}Dao.queryAll($!tool.firstLowerCase($!{tableInfo.name})));
+    public Page<$!{tableInfo.name}PO> queryAllByLimit($!{tableInfo.name}PO $!tool.firstLowerCase($!{tableInfo.name}), int offset, int limit) {
+        return PageHelper.startPage(offset, limit).doSelectPage(()->$!{tool.firstLowerCase($!{tableInfo.name})}Dao.queryAll($!tool.firstLowerCase($!{tableInfo.name})));
     }
 
     /**
